@@ -9,10 +9,12 @@ import { IRobinPolymarketView } from './IRobinPolymarketView.sol';
 import { IRobinYieldStrategyView } from './IRobinYieldStrategyView.sol';
 import { IRobinSignaturesView } from './IRobinSignaturesView.sol';
 import { IRobinPausableView } from './IRobinPausableView.sol';
+import { IAccessControl } from '@openzeppelin/contracts/access/IAccessControl.sol';
 
 /// @title IRobinStakingVault
 /// @notice Full interface for the Robin vault
 interface IRobinStakingVault is
+    IAccessControl,
     IRobinAccountingView,
     IRobinPolymarketView,
     IRobinYieldStrategyView,
