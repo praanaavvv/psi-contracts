@@ -2,7 +2,7 @@
 pragma solidity 0.8.31;
 
 import { DataTypes } from '../types/DataTypes.sol';
-import { IRobinTwapOracle } from '../interfaces/IRobinTwapOracle.sol';
+import { IPsiTwapOracle } from '../interfaces/IPsiTwapOracle.sol';
 import { IConditionalTokens } from '../interfaces/external/IConditionalTokens.sol';
 import { INegRiskAdapter } from '../interfaces/external/INegRiskAdapter.sol';
 import { IRegistry } from '../interfaces/external/IRegistry.sol';
@@ -28,7 +28,7 @@ library StorageLib {
         uint256 accumulatedProtocolFees; // Fees ready to harvest
         // Grace period for Twap timestamp validation (in seconds)
         uint256 twapGracePeriod;
-        IRobinTwapOracle twapOracle;
+        IPsiTwapOracle twapOracle;
         // ERC-1155 Share Token tracking
         mapping(uint256 => DataTypes.MarketTokenInfo) tokenInfo; // tokenId => metadata for reverse lookup
     }

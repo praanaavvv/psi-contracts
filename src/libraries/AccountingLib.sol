@@ -5,8 +5,8 @@ import { Math } from '@openzeppelin/contracts/utils/math/Math.sol';
 import { DataTypes } from '../types/DataTypes.sol';
 import { ShareMath } from './ShareMath.sol';
 import { IndexCalcLib } from './IndexCalcLib.sol';
-import { IRobinStakingVaultEvents } from '../interfaces/IRobinStakingVaultEvents.sol';
-import { IRobinStakingVaultErrors } from '../interfaces/IRobinStakingVaultErrors.sol';
+import { IPsiStakingVaultEvents } from '../interfaces/IPsiStakingVaultEvents.sol';
+import { IPsiStakingVaultErrors } from '../interfaces/IPsiStakingVaultErrors.sol';
 import { StorageLib } from './StorageLib.sol';
 
 /// @title AccountingLib
@@ -28,7 +28,7 @@ library AccountingLib {
     function getTwapAccumulatorYes(bytes32 conditionId) public view returns (uint256 twapAccumulatorYes, uint256 lastUpdate) {
         StorageLib.AccountingStorage storage $ = _getAccountingStorage();
         (twapAccumulatorYes, lastUpdate) = $.twapOracle.getCurrentTwapAccumulator(conditionId);
-        if (lastUpdate == 0) revert IRobinStakingVaultErrors.MarketNotInitialized(conditionId);
+        if (lastUpdate == 0) revert IPsiStakingVaultErrors.MarketNotInitialized(conditionId);
     }
 
     // ============ Pool Management ============
@@ -84,7 +84,7 @@ library AccountingLib {
         StorageLib.AccountingStorage storage $ = _getAccountingStorage();
         DataTypes.MarketState storage market = $.markets[conditionId];
 
-        if (market.marketInitTimestamp > 0) revert IRobinStakingVaultErrors.MarketAlreadyInitialized(conditionId);
+        if (market.marketInitTimestamp > 0) revert IPsiStakingVaultErrors.MarketAlreadyInitialized(conditionId);
 
         uint40 currentTime = uint40(block.timestamp);
         market.marketInitTimestamp = currentTime;
@@ -125,7 +125,7 @@ library AccountingLib {
 
         uint256 timeDelta = block.timestamp - lastTwapUpdate;
         uint256 gracePeriod = $.twapGracePeriod;
-        if (timeDelta > gracePeriod) revert IRobinStakingVaultErrors.TwapGracePeriodExceedsMax(timeDelta, gracePeriod);
+        if (timeDelta > gracePeriod) revert IPsiStakingVaultErrors.TwapGracePeriodExceedsMax(timeDelta, gracePeriod);
 
         // Calculate indexes
         DataTypes.IndexResult memory r = IndexCalcLib.calculateIndexes(
@@ -164,7 +164,7 @@ library AccountingLib {
         // Always update principal to current market value (prevents re-counting the same loss)
         market.principalContributed = r.marketValue;
 
-        emit IRobinStakingVaultEvents.IndexesUpdated(
+        emit IPsiStakingVaultEvents.IndexesUpdated(
             conditionId, r.lossIndexYes, r.lossIndexNo, r.yieldPerShareYes, r.yieldPerShareNo, r.yieldReductionFactor, r.marketValue
         );
     }
@@ -193,19 +193,19 @@ library AccountingLib {
         tokenId = uint256(keccak256(abi.encodePacked(conditionId, uint8(side))));
 
         if (side == DataTypes.Side.YES) {
-            if (market.lossIndexYes == 0) revert IRobinStakingVaultErrors.MarketSideBroken();
+            if (market.lossIndexYes == 0) revert IPsiStakingVaultErrors.MarketSideBroken();
             // Calculate shares at current loss index
             shares = ShareMath.assetsToSharesWithIndex(assets, market.lossIndexYes, false);
-            if (shares == 0) revert IRobinStakingVaultErrors.ZeroAmount();
+            if (shares == 0) revert IPsiStakingVaultErrors.ZeroAmount();
             // Record weighted-average yield snapshot before minting
             userState.yieldSnapshotYes = uint128(_weightedAverageSnapshot(userState.yieldSnapshotYes, oldShares, market.yieldPerShareYes, shares));
             // Update total shares, weighted snapshot tracking
             market.totalSharesYes += shares;
             market.totalWeightedSnapshotYes += shares * uint256(market.yieldPerShareYes);
         } else {
-            if (market.lossIndexNo == 0) revert IRobinStakingVaultErrors.MarketSideBroken();
+            if (market.lossIndexNo == 0) revert IPsiStakingVaultErrors.MarketSideBroken();
             shares = ShareMath.assetsToSharesWithIndex(assets, market.lossIndexNo, false);
-            if (shares == 0) revert IRobinStakingVaultErrors.ZeroAmount();
+            if (shares == 0) revert IPsiStakingVaultErrors.ZeroAmount();
             userState.yieldSnapshotNo = uint128(_weightedAverageSnapshot(userState.yieldSnapshotNo, oldShares, market.yieldPerShareNo, shares));
             market.totalSharesNo += shares;
             market.totalWeightedSnapshotNo += shares * uint256(market.yieldPerShareNo);
@@ -234,7 +234,7 @@ library AccountingLib {
         tokenId = uint256(keccak256(abi.encodePacked(conditionId, uint8(side))));
 
         if (shares > userShares) {
-            revert IRobinStakingVaultErrors.InsufficientShares(shares, userShares);
+            revert IPsiStakingVaultErrors.InsufficientShares(shares, userShares);
         }
 
         if (side == DataTypes.Side.YES) {
@@ -299,7 +299,7 @@ library AccountingLib {
             receiverState.yieldSnapshotNo = receiverSnapshot;
         }
 
-        emit IRobinStakingVaultEvents.SharesTransferred(from, to, conditionId, side, sharesTx, receiverSnapshot);
+        emit IPsiStakingVaultEvents.SharesTransferred(from, to, conditionId, side, sharesTx, receiverSnapshot);
     }
 
     // ============ Internal Helpers ============

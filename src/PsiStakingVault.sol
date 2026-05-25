@@ -16,11 +16,11 @@ import { PausableMixin } from './mixins/PausableMixin.sol';
 import { StorageLib } from './libraries/StorageLib.sol';
 import { DEFAULT_MANAGER_ROLE, FEE_HARVESTER_ROLE, TIMELOCKED_ROLE, PAUSER_ROLE, EXTERNAL_VAULT_MANAGER_ROLE } from './types/Roles.sol';
 
-/// @title RobinStakingVault
+/// @title PsiStakingVault
 /// @notice Singleton vault for Polymarket staking with multi-market support
 /// @dev Combines all mixins with UUPS upgradeability. Admin functions are handled by
-///      RobinStakingVaultExtension via the fallback() function to stay under the 24kb limit.
-contract RobinStakingVault is
+///      PsiStakingVaultExtension via the fallback() function to stay under the 24kb limit.
+contract PsiStakingVault is
     UUPSUpgradeable,
     ReentrancyGuard,
     AccessControlUpgradeable,
@@ -64,12 +64,12 @@ contract RobinStakingVault is
         _setRoleAdmin(TIMELOCKED_ROLE, TIMELOCKED_ROLE);
 
         // Initialize mixins
-        __AccountingMixin_init('https://api.robin.markets/v1/shares/{id}', params.protocolFeeBps, params.twapOracle);
+        __AccountingMixin_init('https://api.psi.finance/v1/shares/{id}', params.protocolFeeBps, params.twapOracle);
         __PolymarketMixin_init(
             params.ctf, params.negRiskAdapter, params.negRiskCtfExchange, params.ctfExchange, params.underlyingUsdc, params.polymarketWcol
         );
         __YieldStrategyMixin_init(params.underlyingUsdc);
-        __SignaturesMixin_init('RobinStakingVault', '1', params.ctfExchange);
+        __SignaturesMixin_init('PsiStakingVault', '1', params.ctfExchange);
 
         // Set extension address
         _getExtensionStorage().extension = params.extension;
@@ -288,7 +288,7 @@ contract RobinStakingVault is
 
     // ============ Signed Withdrawal ============
 
-    /// @dev The purpose of this is to enable limit orders. The user signs the withdrawal for Robin and to place the limit order on Polymarket.
+    /// @dev The purpose of this is to enable limit orders. The user signs the withdrawal for Psi and to place the limit order on Polymarket.
     /// Our backend then monitors the price and executes the withdrawal if the price is close to the limit. Then places the order.
     /// This will be handled differently (Our contract placing the order directly) Once Polymarket enables ERC-1271 signatures.
     function executeSignedWithdrawal(DataTypes.SignedWithdrawal calldata signedWithdrawal) external nonReentrant whenWithdrawalsNotPaused {

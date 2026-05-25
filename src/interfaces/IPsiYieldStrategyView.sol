@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity 0.8.31;
 
-/// @title IRobinYieldStrategyView
+/// @title IPsiYieldStrategyView
 /// @notice Sub-interface for YieldStrategyMixin view functions
-interface IRobinYieldStrategyView {
+interface IPsiYieldStrategyView {
     /// @notice Get all external vaults with their current state
     /// @return addresses Array of external vault addresses
     /// @return balances Array of current balances of the external vaults in USDC

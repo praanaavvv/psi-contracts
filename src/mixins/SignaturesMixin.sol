@@ -6,15 +6,15 @@ import { EIP712Upgradeable } from '@openzeppelin/contracts-upgradeable/utils/cry
 import { ECDSA } from '@openzeppelin/contracts/utils/cryptography/ECDSA.sol';
 import { DataTypes } from '../types/DataTypes.sol';
 
-import { IRobinStakingVaultEvents } from '../interfaces/IRobinStakingVaultEvents.sol';
-import { IRobinStakingVaultErrors } from '../interfaces/IRobinStakingVaultErrors.sol';
+import { IPsiStakingVaultEvents } from '../interfaces/IPsiStakingVaultEvents.sol';
+import { IPsiStakingVaultErrors } from '../interfaces/IPsiStakingVaultErrors.sol';
 import { IPolyFactoryHelper } from '../interfaces/external/IPolyFactoryHelper.sol';
 import { StorageLib } from '../libraries/StorageLib.sol';
 
 /// @title SignaturesMixin
 /// @notice EIP-712 signature verification for signed withdrawals
 /// @dev Uses ERC-7201 namespaced storage pattern for upgradeability
-abstract contract SignaturesMixin is Initializable, EIP712Upgradeable, IRobinStakingVaultEvents, IRobinStakingVaultErrors {
+abstract contract SignaturesMixin is Initializable, EIP712Upgradeable, IPsiStakingVaultEvents, IPsiStakingVaultErrors {
     // ============ EIP-712 Type Hashes ============
 
     /// @notice EIP-712 type hash for signed withdrawal structs

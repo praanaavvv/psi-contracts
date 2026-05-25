@@ -3,17 +3,17 @@ pragma solidity 0.8.31;
 
 import { Math } from '@openzeppelin/contracts/utils/math/Math.sol';
 import { DataTypes } from './types/DataTypes.sol';
-import { IRobinLens } from './interfaces/IRobinLens.sol';
-import { IRobinStakingVault } from './interfaces/IRobinStakingVault.sol';
+import { IPsiLens } from './interfaces/IPsiLens.sol';
+import { IPsiStakingVault } from './interfaces/IPsiStakingVault.sol';
 
-/// @title RobinLens
-/// @notice Read-only aggregation contract for batch queries against RobinStakingVault
+/// @title PsiLens
+/// @notice Read-only aggregation contract for batch queries against PsiStakingVault
 /// @dev Deployed separately from the vault to reduce vault contract size.
 ///      All functions are view-only and delegate to the vault's public view functions.
-contract RobinLens is IRobinLens {
+contract PsiLens is IPsiLens {
     using Math for uint256;
 
-    /// @inheritdoc IRobinLens
+    /// @inheritdoc IPsiLens
     address public immutable vault;
 
     constructor(address vault_) {
@@ -22,13 +22,13 @@ contract RobinLens is IRobinLens {
 
     // ============ Batch Queries ============
 
-    /// @inheritdoc IRobinLens
+    /// @inheritdoc IPsiLens
     function batchGetUserShares(address user, bytes32[] calldata conditionIds)
         external
         view
         returns (uint256[] memory yesShares, uint256[] memory noShares)
     {
-        IRobinStakingVault v = IRobinStakingVault(vault);
+        IPsiStakingVault v = IPsiStakingVault(vault);
         uint256 len = conditionIds.length;
         yesShares = new uint256[](len);
         noShares = new uint256[](len);
@@ -38,13 +38,13 @@ contract RobinLens is IRobinLens {
         }
     }
 
-    /// @inheritdoc IRobinLens
+    /// @inheritdoc IPsiLens
     function batchGetUserAssets(address user, bytes32[] calldata conditionIds)
         external
         view
         returns (uint256[] memory yesAssets, uint256[] memory noAssets)
     {
-        IRobinStakingVault v = IRobinStakingVault(vault);
+        IPsiStakingVault v = IPsiStakingVault(vault);
         uint256 len = conditionIds.length;
         yesAssets = new uint256[](len);
         noAssets = new uint256[](len);
@@ -54,7 +54,7 @@ contract RobinLens is IRobinLens {
         }
     }
 
-    /// @inheritdoc IRobinLens
+    /// @inheritdoc IPsiLens
     function batchGetUserPortfolio(address user, bytes32[] calldata conditionIds, uint256[] calldata twapPricesYes)
         external
         view
@@ -69,7 +69,7 @@ contract RobinLens is IRobinLens {
     {
         if (conditionIds.length != twapPricesYes.length) revert LengthMismatch();
 
-        IRobinStakingVault v = IRobinStakingVault(vault);
+        IPsiStakingVault v = IPsiStakingVault(vault);
         uint256 len = conditionIds.length;
         yesShares = new uint256[](len);
         noShares = new uint256[](len);
@@ -85,7 +85,7 @@ contract RobinLens is IRobinLens {
         }
     }
 
-    /// @inheritdoc IRobinLens
+    /// @inheritdoc IPsiLens
     function batchGetUserYield(address user, bytes32[] calldata conditionIds, uint256[] calldata twapPricesYes)
         external
         view
@@ -93,7 +93,7 @@ contract RobinLens is IRobinLens {
     {
         if (conditionIds.length != twapPricesYes.length) revert LengthMismatch();
 
-        IRobinStakingVault v = IRobinStakingVault(vault);
+        IPsiStakingVault v = IPsiStakingVault(vault);
         uint256 len = conditionIds.length;
         yesYield = new uint256[](len);
         noYield = new uint256[](len);
@@ -103,7 +103,7 @@ contract RobinLens is IRobinLens {
         }
     }
 
-    /// @inheritdoc IRobinLens
+    /// @inheritdoc IPsiLens
     function batchPreviewDeposit(bytes32[] calldata conditionIds, DataTypes.Side[] calldata sides, uint256[] calldata amounts)
         external
         view
@@ -111,7 +111,7 @@ contract RobinLens is IRobinLens {
     {
         if (conditionIds.length != sides.length || conditionIds.length != amounts.length) revert LengthMismatch();
 
-        IRobinStakingVault v = IRobinStakingVault(vault);
+        IPsiStakingVault v = IPsiStakingVault(vault);
         uint256 len = conditionIds.length;
         if (len != sides.length || len != amounts.length) revert LengthMismatch();
         shares = new uint256[](len);
@@ -121,7 +121,7 @@ contract RobinLens is IRobinLens {
         }
     }
 
-    /// @inheritdoc IRobinLens
+    /// @inheritdoc IPsiLens
     function batchPreviewWithdraw(
         address user,
         bytes32[] calldata conditionIds,
@@ -131,7 +131,7 @@ contract RobinLens is IRobinLens {
     ) external view returns (uint256[] memory tokenAssets, uint256[] memory yieldUsdc) {
         if (conditionIds.length != sides.length || conditionIds.length != sharesToBurn.length || conditionIds.length != twapPricesYes.length) revert LengthMismatch();
 
-        IRobinStakingVault v = IRobinStakingVault(vault);
+        IPsiStakingVault v = IPsiStakingVault(vault);
         uint256 len = conditionIds.length;
         if (len != sides.length || len != sharesToBurn.length || len != twapPricesYes.length) revert LengthMismatch();
 
@@ -145,9 +145,9 @@ contract RobinLens is IRobinLens {
 
     // ============ Market State ============
 
-    /// @inheritdoc IRobinLens
+    /// @inheritdoc IPsiLens
     function batchGetMarketState(bytes32[] calldata conditionIds) external view returns (DataTypes.MarketState[] memory states) {
-        IRobinStakingVault v = IRobinStakingVault(vault);
+        IPsiStakingVault v = IPsiStakingVault(vault);
         uint256 len = conditionIds.length;
         states = new DataTypes.MarketState[](len);
 
@@ -156,7 +156,7 @@ contract RobinLens is IRobinLens {
         }
     }
 
-    /// @inheritdoc IRobinLens
+    /// @inheritdoc IPsiLens
     function batchGetMarketIndexes(bytes32[] calldata conditionIds, uint256[] calldata twapPricesYes)
         external
         view
@@ -164,7 +164,7 @@ contract RobinLens is IRobinLens {
     {
         if (conditionIds.length != twapPricesYes.length) revert LengthMismatch();
 
-        IRobinStakingVault v = IRobinStakingVault(vault);
+        IPsiStakingVault v = IPsiStakingVault(vault);
         uint256 len = conditionIds.length;
         results = new DataTypes.IndexResult[](len);
 
@@ -175,7 +175,7 @@ contract RobinLens is IRobinLens {
 
     // ============ Capacity Check ============
 
-    /// @inheritdoc IRobinLens
+    /// @inheritdoc IPsiLens
     function checkBatchDepositCapacity(bytes32[] memory conditionIds, uint256[] memory yesAmounts, uint256[] memory noAmounts)
         public
         view
@@ -183,7 +183,7 @@ contract RobinLens is IRobinLens {
     {
         if (conditionIds.length != yesAmounts.length || conditionIds.length != noAmounts.length) revert LengthMismatch();
 
-        IRobinStakingVault v = IRobinStakingVault(vault);
+        IPsiStakingVault v = IPsiStakingVault(vault);
         uint256 internalCapacity = v.getTotalAvailableInternalCapacity();
         uint256 externalCapacity = v.getTotalAvailableCapacity();
         uint256 newMaxPotential = v.getMaximumAdditionalMatchedTokens();

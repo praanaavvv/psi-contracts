@@ -6,8 +6,8 @@ import { ERC1155Holder } from '@openzeppelin/contracts/token/ERC1155/utils/ERC11
 import { IERC20 } from '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import { SafeERC20 } from '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
 import { DataTypes } from '../types/DataTypes.sol';
-import { IRobinStakingVaultEvents } from '../interfaces/IRobinStakingVaultEvents.sol';
-import { IRobinStakingVaultErrors } from '../interfaces/IRobinStakingVaultErrors.sol';
+import { IPsiStakingVaultEvents } from '../interfaces/IPsiStakingVaultEvents.sol';
+import { IPsiStakingVaultErrors } from '../interfaces/IPsiStakingVaultErrors.sol';
 
 import { IConditionalTokens } from '../interfaces/external/IConditionalTokens.sol';
 import { INegRiskAdapter } from '../interfaces/external/INegRiskAdapter.sol';
@@ -20,7 +20,7 @@ import { StorageLib } from '../libraries/StorageLib.sol';
 /// @notice Polymarket CTF integration for multi-market singleton vault
 /// @dev Uses ERC-7201 namespaced storage pattern for upgradeability.
 ///      Heavy logic delegated to PolymarketLib (external library) to reduce bytecode.
-abstract contract PolymarketMixin is Initializable, ERC1155Holder, IRobinStakingVaultEvents, IRobinStakingVaultErrors {
+abstract contract PolymarketMixin is Initializable, ERC1155Holder, IPsiStakingVaultEvents, IPsiStakingVaultErrors {
     using SafeERC20 for IERC20;
 
     // ============ ERC-7201 Namespaced Storage ============

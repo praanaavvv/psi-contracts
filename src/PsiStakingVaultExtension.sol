@@ -5,8 +5,8 @@ import { AccessControlUpgradeable } from '@openzeppelin/contracts-upgradeable/ac
 import { ERC1155Upgradeable } from '@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol';
 
 import { DataTypes } from './types/DataTypes.sol';
-import { IRobinStakingVaultErrors } from './interfaces/IRobinStakingVaultErrors.sol';
-import { IRobinStakingVaultEvents } from './interfaces/IRobinStakingVaultEvents.sol';
+import { IPsiStakingVaultErrors } from './interfaces/IPsiStakingVaultErrors.sol';
+import { IPsiStakingVaultEvents } from './interfaces/IPsiStakingVaultEvents.sol';
 import { AccountingMixin } from './mixins/AccountingMixin.sol';
 import { YieldStrategyMixin } from './mixins/YieldStrategyMixin.sol';
 import { PausableMixin } from './mixins/PausableMixin.sol';
@@ -19,11 +19,11 @@ import {
     EXTERNAL_VAULT_MANAGER_ROLE as _EXTERNAL_VAULT_MANAGER_ROLE
 } from './types/Roles.sol';
 
-/// @title RobinStakingVaultExtension
-/// @notice Extension contract for admin functions, reached via fallback delegation from RobinStakingVault
+/// @title PsiStakingVaultExtension
+/// @notice Extension contract for admin functions, reached via fallback delegation from PsiStakingVault
 /// @dev This contract is NOT proxied directly. It is DELEGATECALLed from the main vault implementation
 ///      via its fallback() function. Shares the same ERC-7201 namespaced storage as the main contract.
-contract RobinStakingVaultExtension is AccessControlUpgradeable, AccountingMixin, YieldStrategyMixin, PausableMixin {
+contract PsiStakingVaultExtension is AccessControlUpgradeable, AccountingMixin, YieldStrategyMixin, PausableMixin {
     // ============ Roles (sourced from Roles.sol) ============
 
     bytes32 public constant DEFAULT_MANAGER_ROLE = _DEFAULT_MANAGER_ROLE;
@@ -43,9 +43,9 @@ contract RobinStakingVaultExtension is AccessControlUpgradeable, AccountingMixin
     /// @notice Set the extension contract address (for upgrades to the extension)
     /// @param newExtension Address of the new extension contract
     function setExtensionAddress(address newExtension) external onlyRole(TIMELOCKED_ROLE) {
-        if (newExtension == address(0)) revert IRobinStakingVaultErrors.ZeroAddress();
+        if (newExtension == address(0)) revert IPsiStakingVaultErrors.ZeroAddress();
         _getExtensionStorage().extension = newExtension;
-        emit IRobinStakingVaultEvents.ExtensionAddressUpdated(newExtension);
+        emit IPsiStakingVaultEvents.ExtensionAddressUpdated(newExtension);
     }
 
     // ============ Admin Functions - Vault Management ============
@@ -85,7 +85,7 @@ contract RobinStakingVaultExtension is AccessControlUpgradeable, AccountingMixin
 
     /// @dev Withdraws from vaults if contract doesn't have enough Usdc
     function harvestProtocolFee(address to) external onlyRole(FEE_HARVESTER_ROLE) {
-        if (to == address(0)) revert IRobinStakingVaultErrors.ZeroAddress();
+        if (to == address(0)) revert IPsiStakingVaultErrors.ZeroAddress();
         uint256 amount = _harvestProtocolFees();
 
         // Ensure we have enough Usdc (withdraw from vaults if needed)
@@ -96,7 +96,7 @@ contract RobinStakingVaultExtension is AccessControlUpgradeable, AccountingMixin
         }
 
         _transferUsdc(to, amount);
-        emit IRobinStakingVaultEvents.ProtocolFeeHarvested(to, amount);
+        emit IPsiStakingVaultEvents.ProtocolFeeHarvested(to, amount);
     }
 
     // ============ Admin Functions - Twap ============

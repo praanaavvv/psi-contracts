@@ -3,9 +3,9 @@ pragma solidity 0.8.31;
 
 import { DataTypes } from '../types/DataTypes.sol';
 
-/// @title IRobinStakingVaultEvents
-/// @notice All events for the Robin vault system
-interface IRobinStakingVaultEvents {
+/// @title IPsiStakingVaultEvents
+/// @notice All events for the Psi vault system
+interface IPsiStakingVaultEvents {
     // ============ Core User Events ============
 
     /// @notice Emitted when user batch deposits to multiple markets

@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity 0.8.31;
 
-/// @title IRobinSignaturesView
+/// @title IPsiSignaturesView
 /// @notice Sub-interface for SignaturesMixin view functions
-interface IRobinSignaturesView {
+interface IPsiSignaturesView {
     /// @notice Get the nonce bitmap for a user at a specific word position
     /// @param user The user address
     /// @param wordPos The word position (nonce / 256)

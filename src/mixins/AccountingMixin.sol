@@ -9,17 +9,17 @@ import { DataTypes } from '../types/DataTypes.sol';
 import { ShareMath } from '../libraries/ShareMath.sol';
 import { IndexCalcLib } from '../libraries/IndexCalcLib.sol';
 import { AccountingLib } from '../libraries/AccountingLib.sol';
-import { IRobinStakingVaultEvents } from '../interfaces/IRobinStakingVaultEvents.sol';
-import { IRobinStakingVaultErrors } from '../interfaces/IRobinStakingVaultErrors.sol';
+import { IPsiStakingVaultEvents } from '../interfaces/IPsiStakingVaultEvents.sol';
+import { IPsiStakingVaultErrors } from '../interfaces/IPsiStakingVaultErrors.sol';
 
-import { IRobinTwapOracle } from '../interfaces/IRobinTwapOracle.sol';
+import { IPsiTwapOracle } from '../interfaces/IPsiTwapOracle.sol';
 import { StorageLib } from '../libraries/StorageLib.sol';
 
 /// @title AccountingMixin
 /// @notice ERC-4626-like per-side share accounting with ERC-1155 share representation
 /// @dev Uses ERC-7201 namespaced storage pattern for upgradeability.
 ///      Each (conditionId, side) combination has a unique ERC-1155 token ID.
-abstract contract AccountingMixin is Initializable, ERC1155Upgradeable, ReentrancyGuard, IRobinStakingVaultEvents, IRobinStakingVaultErrors {
+abstract contract AccountingMixin is Initializable, ERC1155Upgradeable, ReentrancyGuard, IPsiStakingVaultEvents, IPsiStakingVaultErrors {
     using Math for uint256;
 
     // ============ Constants ============
@@ -49,7 +49,7 @@ abstract contract AccountingMixin is Initializable, ERC1155Upgradeable, Reentran
 
         StorageLib.AccountingStorage storage $ = _getAccountingStorage();
         $.protocolFeeBps = protocolFeeBps_;
-        $.twapOracle = IRobinTwapOracle(twapOracle_);
+        $.twapOracle = IPsiTwapOracle(twapOracle_);
         $.twapGracePeriod = DEFAULT_TWAP_GRACE_PERIOD;
     }
 
@@ -366,7 +366,7 @@ abstract contract AccountingMixin is Initializable, ERC1155Upgradeable, Reentran
     /// @notice Set the Twap Oracle
     /// @param twapOracle_ The Twap Oracle address
     function _setTwapOracle(address twapOracle_) internal {
-        _getAccountingStorage().twapOracle = IRobinTwapOracle(twapOracle_);
+        _getAccountingStorage().twapOracle = IPsiTwapOracle(twapOracle_);
     }
 
     /// @notice Handle the accounting updates for a share transfer (delegated to AccountingLib)

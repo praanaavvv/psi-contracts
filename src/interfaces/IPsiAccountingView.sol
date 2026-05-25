@@ -4,9 +4,9 @@ pragma solidity 0.8.31;
 import { DataTypes } from '../types/DataTypes.sol';
 import { IERC1155 } from '@openzeppelin/contracts/token/ERC1155/IERC1155.sol';
 
-/// @title IRobinAccountingView
+/// @title IPsiAccountingView
 /// @notice Sub-interface for AccountingMixin view functions
-interface IRobinAccountingView is IERC1155 {
+interface IPsiAccountingView is IERC1155 {
     /// @notice Get the Twap Oracle
     /// @return The Twap Oracle address
     function getTwapOracle() external view returns (address);

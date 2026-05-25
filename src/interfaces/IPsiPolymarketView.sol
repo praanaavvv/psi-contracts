@@ -3,9 +3,9 @@ pragma solidity 0.8.31;
 
 import { DataTypes } from '../types/DataTypes.sol';
 
-/// @title IRobinPolymarketView
+/// @title IPsiPolymarketView
 /// @notice Sub-interface for PolymarketMixin view functions
-interface IRobinPolymarketView {
+interface IPsiPolymarketView {
     /// @notice Get Polymarket token info for a market
     /// @param conditionId Market condition ID
     /// @return Cached Polymarket token info (position IDs, negRisk flag, collateral)

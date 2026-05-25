@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity 0.8.31;
 
-/// @title IRobinStakingVaultErrors
-/// @notice All custom errors for the Robin vault system
-interface IRobinStakingVaultErrors {
+/// @title IPsiStakingVaultErrors
+/// @notice All custom errors for the Psi vault system
+interface IPsiStakingVaultErrors {
     // ============ Input Validation Errors ============
 
     /// @notice Thrown when zero address is provided

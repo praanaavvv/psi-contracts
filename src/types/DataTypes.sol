@@ -2,7 +2,7 @@
 pragma solidity 0.8.31;
 
 /// @title DataTypes
-/// @notice Shared types for Robin  vault system
+/// @notice Shared types for Psi  vault system
 library DataTypes {
     // ============ Constants ============
 
@@ -161,7 +161,7 @@ library DataTypes {
 
     // ============ Initialization Params ============
 
-    /// @notice Initialization parameters for RobinStakingVault
+    /// @notice Initialization parameters for PsiStakingVault
     /// @dev Used to avoid stack-too-deep in initialize()
     struct InitParams {
         address owner;

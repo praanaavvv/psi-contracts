@@ -3,9 +3,9 @@ pragma solidity 0.8.31;
 
 import { DataTypes } from '../types/DataTypes.sol';
 
-/// @title IRobinLens
-/// @notice Read-only aggregation contract for batch queries against RobinStakingVault
-interface IRobinLens {
+/// @title IPsiLens
+/// @notice Read-only aggregation contract for batch queries against PsiStakingVault
+interface IPsiLens {
     // ============ Batch Queries ============
 
     /// @notice Batch query user's shares across multiple markets
@@ -118,7 +118,7 @@ interface IRobinLens {
 
     // ============ Vault Reference ============
 
-    /// @notice Get the address of the RobinStakingVault this lens reads from
+    /// @notice Get the address of the PsiStakingVault this lens reads from
     /// @return The vault address
     function vault() external view returns (address);
 }

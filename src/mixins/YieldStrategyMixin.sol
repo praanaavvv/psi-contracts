@@ -5,8 +5,8 @@ import { Initializable } from '@openzeppelin/contracts-upgradeable/proxy/utils/I
 import { IERC20 } from '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import { SafeERC20 } from '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
 import { DataTypes } from '../types/DataTypes.sol';
-import { IRobinStakingVaultEvents } from '../interfaces/IRobinStakingVaultEvents.sol';
-import { IRobinStakingVaultErrors } from '../interfaces/IRobinStakingVaultErrors.sol';
+import { IPsiStakingVaultEvents } from '../interfaces/IPsiStakingVaultEvents.sol';
+import { IPsiStakingVaultErrors } from '../interfaces/IPsiStakingVaultErrors.sol';
 
 import { VaultLib } from '../libraries/VaultLib.sol';
 import { StorageLib } from '../libraries/StorageLib.sol';
@@ -15,7 +15,7 @@ import { StorageLib } from '../libraries/StorageLib.sol';
 /// @notice Generic ERC-4626 vault management for yield generation
 /// @dev Uses ERC-7201 namespaced storage pattern for upgradeability.
 ///      Heavy logic delegated to VaultLib (external library) to reduce bytecode.
-abstract contract YieldStrategyMixin is Initializable, IRobinStakingVaultEvents, IRobinStakingVaultErrors {
+abstract contract YieldStrategyMixin is Initializable, IPsiStakingVaultEvents, IPsiStakingVaultErrors {
     using SafeERC20 for IERC20;
 
     // ============ ERC-7201 Namespaced Storage ============

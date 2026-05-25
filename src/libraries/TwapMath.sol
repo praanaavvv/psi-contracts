@@ -3,7 +3,7 @@ pragma solidity 0.8.31;
 
 import { Math } from '@openzeppelin/contracts/utils/math/Math.sol';
 import { DataTypes } from '../types/DataTypes.sol';
-import { IRobinTwapOracle } from '../interfaces/IRobinTwapOracle.sol';
+import { IPsiTwapOracle } from '../interfaces/IPsiTwapOracle.sol';
 
 /// @title TwapMath
 /// @notice Twap index calculations and yield distribution logic
@@ -81,12 +81,12 @@ library TwapMath {
     function _validateTwapData(DataTypes.TwapData memory data, uint256 lastUpdate) internal view {
         // Validate timing with grace period
         if (!TwapMath.validateTwapTiming(data.startTimestamp, data.endTimestamp, lastUpdate, block.timestamp)) {
-            revert IRobinTwapOracle.TwapTimestampInvalid(data.startTimestamp, data.endTimestamp, lastUpdate);
+            revert IPsiTwapOracle.TwapTimestampInvalid(data.startTimestamp, data.endTimestamp, lastUpdate);
         }
 
         // Validate price range
         if (data.twapPriceYes > DataTypes.PRICE_SCALE) {
-            revert IRobinTwapOracle.TwapPriceOutOfRange(data.twapPriceYes);
+            revert IPsiTwapOracle.TwapPriceOutOfRange(data.twapPriceYes);
         }
 
         // NONCES are not needed for Twaps since replay attacks are not possible for the same timestamp

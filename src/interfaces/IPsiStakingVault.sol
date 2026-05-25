@@ -2,26 +2,26 @@
 pragma solidity 0.8.31;
 
 import { DataTypes } from '../types/DataTypes.sol';
-import { IRobinStakingVaultEvents } from './IRobinStakingVaultEvents.sol';
-import { IRobinStakingVaultErrors } from './IRobinStakingVaultErrors.sol';
-import { IRobinAccountingView } from './IRobinAccountingView.sol';
-import { IRobinPolymarketView } from './IRobinPolymarketView.sol';
-import { IRobinYieldStrategyView } from './IRobinYieldStrategyView.sol';
-import { IRobinSignaturesView } from './IRobinSignaturesView.sol';
-import { IRobinPausableView } from './IRobinPausableView.sol';
+import { IPsiStakingVaultEvents } from './IPsiStakingVaultEvents.sol';
+import { IPsiStakingVaultErrors } from './IPsiStakingVaultErrors.sol';
+import { IPsiAccountingView } from './IPsiAccountingView.sol';
+import { IPsiPolymarketView } from './IPsiPolymarketView.sol';
+import { IPsiYieldStrategyView } from './IPsiYieldStrategyView.sol';
+import { IPsiSignaturesView } from './IPsiSignaturesView.sol';
+import { IPsiPausableView } from './IPsiPausableView.sol';
 import { IAccessControl } from '@openzeppelin/contracts/access/IAccessControl.sol';
 
-/// @title IRobinStakingVault
-/// @notice Full interface for the Robin vault
-interface IRobinStakingVault is
+/// @title IPsiStakingVault
+/// @notice Full interface for the Psi vault
+interface IPsiStakingVault is
     IAccessControl,
-    IRobinAccountingView,
-    IRobinPolymarketView,
-    IRobinYieldStrategyView,
-    IRobinSignaturesView,
-    IRobinPausableView,
-    IRobinStakingVaultEvents,
-    IRobinStakingVaultErrors
+    IPsiAccountingView,
+    IPsiPolymarketView,
+    IPsiYieldStrategyView,
+    IPsiSignaturesView,
+    IPsiPausableView,
+    IPsiStakingVaultEvents,
+    IPsiStakingVaultErrors
 {
     // ============ Initialization ============
 

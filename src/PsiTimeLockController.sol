@@ -3,10 +3,10 @@ pragma solidity 0.8.31;
 
 import { TimelockController } from '@openzeppelin/contracts/governance/TimelockController.sol';
 
-/// @title RobinTimeLockController
+/// @title PsiTimeLockController
 /// @notice Timelock controller for governance-enforced delays on critical vault operations
 /// @dev Wraps OpenZeppelin's TimelockController with no additional admin (address(0))
-contract RobinTimeLockController is TimelockController {
+contract PsiTimeLockController is TimelockController {
     /// @notice Deploy the timelock controller
     /// @param minDelay Minimum delay in seconds before a queued operation can be executed
     /// @param proposers Addresses allowed to propose (schedule) operations

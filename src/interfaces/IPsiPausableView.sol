@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity 0.8.31;
 
-/// @title IRobinPausableView
+/// @title IPsiPausableView
 /// @notice Sub-interface for PausableMixin view functions
-interface IRobinPausableView {
+interface IPsiPausableView {
     /// @notice Check if all operations are paused
     /// @return True if the global pause is active
     function isPausedAll() external view returns (bool);

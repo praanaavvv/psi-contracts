@@ -5,8 +5,8 @@ import { IERC20 } from '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import { SafeERC20 } from '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
 import { IERC4626 } from '@openzeppelin/contracts/interfaces/IERC4626.sol';
 import { DataTypes } from '../types/DataTypes.sol';
-import { IRobinStakingVaultEvents } from '../interfaces/IRobinStakingVaultEvents.sol';
-import { IRobinStakingVaultErrors } from '../interfaces/IRobinStakingVaultErrors.sol';
+import { IPsiStakingVaultEvents } from '../interfaces/IPsiStakingVaultEvents.sol';
+import { IPsiStakingVaultErrors } from '../interfaces/IPsiStakingVaultErrors.sol';
 import { StorageLib } from './StorageLib.sol';
 
 /// @title VaultLib
@@ -29,17 +29,17 @@ library VaultLib {
     function addVault(address vault, uint256 cap, uint256 reservedUsdc) external {
         StorageLib.YieldStrategyStorage storage $ = _getStorage();
 
-        if (vault == address(0)) revert IRobinStakingVaultErrors.ZeroAddress();
-        if ($.vaultIndex[vault] != 0) revert IRobinStakingVaultErrors.VaultAlreadyExists(vault);
+        if (vault == address(0)) revert IPsiStakingVaultErrors.ZeroAddress();
+        if ($.vaultIndex[vault] != 0) revert IPsiStakingVaultErrors.VaultAlreadyExists(vault);
 
         // Validate it's an ERC-4626 vault with correct asset
         address asset = IERC4626(vault).asset();
-        if (asset != $.underlyingUsdc) revert IRobinStakingVaultErrors.ZeroAddress(); // Wrong asset
+        if (asset != $.underlyingUsdc) revert IPsiStakingVaultErrors.ZeroAddress(); // Wrong asset
 
         $.vaults.push(DataTypes.ExternalVault({ vault: vault, cap: cap, active: true, emergencyActivated: false }));
         $.vaultIndex[vault] = $.vaults.length; // 1-indexed
 
-        emit IRobinStakingVaultEvents.VaultAdded(vault, cap);
+        emit IPsiStakingVaultEvents.VaultAdded(vault, cap);
 
         if (!$.emergencyMode) {
             _trySupplyIdleToVaults(reservedUsdc);
@@ -54,7 +54,7 @@ library VaultLib {
         StorageLib.YieldStrategyStorage storage $ = _getStorage();
 
         uint256 idx = $.vaultIndex[vault];
-        if (idx == 0) revert IRobinStakingVaultErrors.VaultNotFound(vault);
+        if (idx == 0) revert IPsiStakingVaultErrors.VaultNotFound(vault);
         idx--; // Convert to 0-indexed
 
         // Withdraw everything from this vault
@@ -73,7 +73,7 @@ library VaultLib {
         $.vaults.pop();
         delete $.vaultIndex[vault];
 
-        emit IRobinStakingVaultEvents.VaultRemoved(vault, withdrawn);
+        emit IPsiStakingVaultEvents.VaultRemoved(vault, withdrawn);
 
         // Try to redeposit to remaining vaults if not in emergency mode
         // Non-reverting: any leftover stays idle in contract
@@ -87,13 +87,13 @@ library VaultLib {
         StorageLib.YieldStrategyStorage storage $ = _getStorage();
 
         uint256 idx = $.vaultIndex[vault];
-        if (idx == 0) revert IRobinStakingVaultErrors.VaultNotFound(vault);
+        if (idx == 0) revert IPsiStakingVaultErrors.VaultNotFound(vault);
         idx--;
 
         uint256 oldCap = $.vaults[idx].cap;
         $.vaults[idx].cap = newCap;
 
-        emit IRobinStakingVaultEvents.VaultCapUpdated(vault, oldCap, newCap);
+        emit IPsiStakingVaultEvents.VaultCapUpdated(vault, oldCap, newCap);
     }
 
     /// @notice Enable or disable a vault for new deposits
@@ -101,12 +101,12 @@ library VaultLib {
         StorageLib.YieldStrategyStorage storage $ = _getStorage();
 
         uint256 idx = $.vaultIndex[vault];
-        if (idx == 0) revert IRobinStakingVaultErrors.VaultNotFound(vault);
+        if (idx == 0) revert IPsiStakingVaultErrors.VaultNotFound(vault);
         idx--;
 
         $.vaults[idx].active = active;
 
-        emit IRobinStakingVaultEvents.VaultActiveUpdated(vault, active);
+        emit IPsiStakingVaultEvents.VaultActiveUpdated(vault, active);
     }
 
     /// @notice Swap the order of two vaults in the processing queue
@@ -123,8 +123,8 @@ library VaultLib {
         uint256 idx1 = $.vaultIndex[vault1];
         uint256 idx2 = $.vaultIndex[vault2];
 
-        if (idx1 == 0) revert IRobinStakingVaultErrors.VaultNotFound(vault1);
-        if (idx2 == 0) revert IRobinStakingVaultErrors.VaultNotFound(vault2);
+        if (idx1 == 0) revert IPsiStakingVaultErrors.VaultNotFound(vault1);
+        if (idx2 == 0) revert IPsiStakingVaultErrors.VaultNotFound(vault2);
 
         // Convert to 0-indexed
         idx1--;
@@ -139,7 +139,7 @@ library VaultLib {
         $.vaultIndex[vault1] = idx2 + 1;
         $.vaultIndex[vault2] = idx1 + 1;
 
-        emit IRobinStakingVaultEvents.VaultsSwapped(vault1, vault2, idx1, idx2);
+        emit IPsiStakingVaultEvents.VaultsSwapped(vault1, vault2, idx1, idx2);
     }
 
     // ============ Emergency Mode ============
@@ -156,7 +156,7 @@ library VaultLib {
         }
 
         $.emergencyMode = true;
-        emit IRobinStakingVaultEvents.EmergencyModeUpdated(true);
+        emit IPsiStakingVaultEvents.EmergencyModeUpdated(true);
     }
 
     /// @notice Withdraw maximum possible from vaults during emergency
@@ -172,7 +172,7 @@ library VaultLib {
         }
 
         // For withdrawing from all vaults, require global emergency mode
-        if (!$.emergencyMode) revert IRobinStakingVaultErrors.NotInEmergencyMode();
+        if (!$.emergencyMode) revert IPsiStakingVaultErrors.NotInEmergencyMode();
 
         // Withdraw from all vaults
         for (uint256 i = 0; i < $.vaults.length; i++) {
@@ -185,10 +185,10 @@ library VaultLib {
     function disableEmergencyMode(uint256 reservedUsdc) external {
         StorageLib.YieldStrategyStorage storage $ = _getStorage();
 
-        if (!$.emergencyMode) revert IRobinStakingVaultErrors.NotInEmergencyMode();
+        if (!$.emergencyMode) revert IPsiStakingVaultErrors.NotInEmergencyMode();
 
         $.emergencyMode = false;
-        emit IRobinStakingVaultEvents.EmergencyModeUpdated(false);
+        emit IPsiStakingVaultEvents.EmergencyModeUpdated(false);
 
         // Try to redeposit idle Usdc to vaults
         // Non-reverting: any leftover stays idle in contract
@@ -203,7 +203,7 @@ library VaultLib {
         StorageLib.YieldStrategyStorage storage $ = _getStorage();
 
         uint256 idx = $.vaultIndex[vault];
-        if (idx == 0) revert IRobinStakingVaultErrors.VaultNotFound(vault);
+        if (idx == 0) revert IPsiStakingVaultErrors.VaultNotFound(vault);
         idx--;
 
         DataTypes.ExternalVault storage v = $.vaults[idx];
@@ -213,7 +213,7 @@ library VaultLib {
         withdrawn = _withdrawMaxFromVault(vault);
         v.emergencyActivated = true;
 
-        emit IRobinStakingVaultEvents.VaultEmergencyUpdated(vault, true);
+        emit IPsiStakingVaultEvents.VaultEmergencyUpdated(vault, true);
 
         return withdrawn;
     }
@@ -225,7 +225,7 @@ library VaultLib {
         StorageLib.YieldStrategyStorage storage $ = _getStorage();
 
         uint256 idx = $.vaultIndex[vault];
-        if (idx == 0) revert IRobinStakingVaultErrors.VaultNotFound(vault);
+        if (idx == 0) revert IPsiStakingVaultErrors.VaultNotFound(vault);
         idx--;
 
         DataTypes.ExternalVault storage v = $.vaults[idx];
@@ -234,7 +234,7 @@ library VaultLib {
         // Clear emergency flag
         v.emergencyActivated = false;
 
-        emit IRobinStakingVaultEvents.VaultEmergencyUpdated(vault, false);
+        emit IPsiStakingVaultEvents.VaultEmergencyUpdated(vault, false);
 
         // Try to redeposit idle Usdc to vaults (non-reverting)
         if (!$.emergencyMode) {
@@ -252,7 +252,7 @@ library VaultLib {
         uint256 toBeSupplied = _getIdleUsdc(reservedUsdc);
         uint256 remaining = _trySupplyToVaults(toBeSupplied, reservedUsdc);
         if (remaining > 0) {
-            revert IRobinStakingVaultErrors.SupplyOverflow(remaining, toBeSupplied);
+            revert IPsiStakingVaultErrors.SupplyOverflow(remaining, toBeSupplied);
         }
     }
 
@@ -326,7 +326,7 @@ library VaultLib {
             uint256 shares = IERC4626(v.vault).deposit(toDeposit, address(this));
             IERC20($.underlyingUsdc).forceApprove(v.vault, 0);
 
-            emit IRobinStakingVaultEvents.VaultDeposit(v.vault, toDeposit, shares);
+            emit IPsiStakingVaultEvents.VaultDeposit(v.vault, toDeposit, shares);
 
             remaining -= toDeposit;
         }
@@ -361,12 +361,12 @@ library VaultLib {
             // Calculate shares to redeem
             uint256 shares = IERC4626(v.vault).withdraw(toWithdraw, address(this), address(this));
 
-            emit IRobinStakingVaultEvents.VaultWithdrawal(v.vault, shares, toWithdraw);
+            emit IPsiStakingVaultEvents.VaultWithdrawal(v.vault, shares, toWithdraw);
 
             remaining -= toWithdraw;
         }
 
-        if (remaining > 0) revert IRobinStakingVaultErrors.InsufficientLiquidity(remaining);
+        if (remaining > 0) revert IPsiStakingVaultErrors.InsufficientLiquidity(remaining);
     }
 
     /// @notice Withdraw as much as possible from a specific vault (non-reverting)
@@ -377,7 +377,7 @@ library VaultLib {
 
         shares = IERC4626(vault).withdraw(maxWithdraw, address(this), address(this));
 
-        emit IRobinStakingVaultEvents.VaultWithdrawal(vault, shares, maxWithdraw);
+        emit IPsiStakingVaultEvents.VaultWithdrawal(vault, shares, maxWithdraw);
     }
 
     /// @notice Withdraw all from a specific vault (reverts if not all can be withdrawn)
@@ -388,7 +388,7 @@ library VaultLib {
 
         withdrawn = IERC4626(vault).redeem(shares, address(this), address(this));
 
-        emit IRobinStakingVaultEvents.VaultWithdrawal(vault, shares, withdrawn);
+        emit IPsiStakingVaultEvents.VaultWithdrawal(vault, shares, withdrawn);
     }
 
     // ============ View Functions ============

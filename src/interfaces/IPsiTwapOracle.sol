@@ -3,9 +3,9 @@ pragma solidity 0.8.31;
 
 import { DataTypes } from '../types/DataTypes.sol';
 
-/// @title IRobinTwapOracle
-/// @notice Interface for the Robin Twap Oracle
-interface IRobinTwapOracle {
+/// @title IPsiTwapOracle
+/// @notice Interface for the Psi Twap Oracle
+interface IPsiTwapOracle {
     // ============ Errors ============
 
     error ZeroAddress();

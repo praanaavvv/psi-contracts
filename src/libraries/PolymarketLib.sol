@@ -5,8 +5,8 @@ import { IERC20 } from '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import { SafeERC20 } from '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
 import { Math } from '@openzeppelin/contracts/utils/math/Math.sol';
 import { DataTypes } from '../types/DataTypes.sol';
-import { IRobinStakingVaultEvents } from '../interfaces/IRobinStakingVaultEvents.sol';
-import { IRobinStakingVaultErrors } from '../interfaces/IRobinStakingVaultErrors.sol';
+import { IPsiStakingVaultEvents } from '../interfaces/IPsiStakingVaultEvents.sol';
+import { IPsiStakingVaultErrors } from '../interfaces/IPsiStakingVaultErrors.sol';
 import { IConditionalTokens } from '../interfaces/external/IConditionalTokens.sol';
 import { IRegistry } from '../interfaces/external/IRegistry.sol';
 import { StorageLib } from './StorageLib.sol';
@@ -32,7 +32,7 @@ library PolymarketLib {
 
         // Validate binary market
         uint256 outcomeSlotCount = ctf.getOutcomeSlotCount(conditionId);
-        if (outcomeSlotCount != 2) revert IRobinStakingVaultErrors.InvalidOutcomeSlotCount(conditionId, outcomeSlotCount);
+        if (outcomeSlotCount != 2) revert IPsiStakingVaultErrors.InvalidOutcomeSlotCount(conditionId, outcomeSlotCount);
 
         // Compute collections
         bytes32 yesColl = ctf.getCollectionId(DataTypes.PARENT_COLLECTION_ID, conditionId, DataTypes.YES_INDEX_SET);
@@ -51,7 +51,7 @@ library PolymarketLib {
         // Store info
         $.tokenInfo[conditionId] = info;
 
-        emit IRobinStakingVaultEvents.MarketInitialized(conditionId, info.yesPositionId, info.noPositionId, negRisk);
+        emit IPsiStakingVaultEvents.MarketInitialized(conditionId, info.yesPositionId, info.noPositionId, negRisk);
     }
 
     // ============ Token Transfers ============
@@ -65,7 +65,7 @@ library PolymarketLib {
         StorageLib.PolymarketStorage storage $ = _getStorage();
         IConditionalTokens ctf = $.ctf;
 
-        if (!ctf.isApprovedForAll(from, address(this))) revert IRobinStakingVaultErrors.CTFApprovalRequired();
+        if (!ctf.isApprovedForAll(from, address(this))) revert IPsiStakingVaultErrors.CTFApprovalRequired();
 
         if (ids.length == 1) {
             ctf.safeTransferFrom(from, address(this), ids[0], amts[0], '');
@@ -112,7 +112,7 @@ library PolymarketLib {
         (uint256 newYes, uint256 newNo) = getUnpairedTokens(conditionId);
         _updateMaxPotential($, newYes - usdcAmount, newNo - usdcAmount, newYes, newNo);
 
-        emit IRobinStakingVaultEvents.TokensSplit(conditionId, usdcAmount, usdcAmount);
+        emit IPsiStakingVaultEvents.TokensSplit(conditionId, usdcAmount, usdcAmount);
     }
 
     /// @notice Pair unpaired tokens and merge to Usdc
@@ -170,7 +170,7 @@ library PolymarketLib {
             return false; // Regular → USDC.e
         }
 
-        revert IRobinStakingVaultErrors.UnlistedCondition(conditionId);
+        revert IPsiStakingVaultErrors.UnlistedCondition(conditionId);
     }
 
     /// @notice Check if a token pair is listed on a Polymarket exchange registry
@@ -227,7 +227,7 @@ library PolymarketLib {
         (uint256 newYes, uint256 newNo) = getUnpairedTokens(conditionId);
         _updateMaxPotential($, newYes + pairs, newNo + pairs, newYes, newNo);
 
-        emit IRobinStakingVaultEvents.TokensPaired(conditionId, pairs, usdcReceived);
+        emit IPsiStakingVaultEvents.TokensPaired(conditionId, pairs, usdcReceived);
     }
 
     /// @notice Internal helper to update max potential matched tokens

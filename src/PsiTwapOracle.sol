@@ -7,35 +7,35 @@ import { AccessControlUpgradeable } from '@openzeppelin/contracts-upgradeable/ac
 import { Math } from '@openzeppelin/contracts/utils/math/Math.sol';
 import { DataTypes } from './types/DataTypes.sol';
 import { TwapMath } from './libraries/TwapMath.sol';
-import { IRobinTwapOracle } from './interfaces/IRobinTwapOracle.sol';
+import { IPsiTwapOracle } from './interfaces/IPsiTwapOracle.sol';
 import { EIP712Upgradeable } from '@openzeppelin/contracts-upgradeable/utils/cryptography/EIP712Upgradeable.sol';
 import { PausableUpgradeable } from '@openzeppelin/contracts-upgradeable/utils/PausableUpgradeable.sol';
 import { ECDSA } from '@openzeppelin/contracts/utils/cryptography/ECDSA.sol';
 
-/// @title RobinTwapOracle
-/// @notice Oracle for Robin Twap markets
-contract RobinTwapOracle is Initializable, UUPSUpgradeable, AccessControlUpgradeable, EIP712Upgradeable, PausableUpgradeable, IRobinTwapOracle {
+/// @title PsiTwapOracle
+/// @notice Oracle for Psi Twap markets
+contract PsiTwapOracle is Initializable, UUPSUpgradeable, AccessControlUpgradeable, EIP712Upgradeable, PausableUpgradeable, IPsiTwapOracle {
     using Math for uint256;
 
     // ============ Roles ============
 
-    /// @inheritdoc IRobinTwapOracle
+    /// @inheritdoc IPsiTwapOracle
     bytes32 public constant DEFAULT_MANAGER_ROLE = keccak256('DEFAULT_MANAGER_ROLE');
 
-    /// @inheritdoc IRobinTwapOracle
+    /// @inheritdoc IPsiTwapOracle
     bytes32 public constant TIMELOCKED_ROLE = keccak256('TIMELOCKED_ROLE');
 
-    /// @inheritdoc IRobinTwapOracle
+    /// @inheritdoc IPsiTwapOracle
     bytes32 public constant VAULT_ROLE = keccak256('VAULT_ROLE');
 
     // ============ Constants ============
 
-    /// @inheritdoc IRobinTwapOracle
+    /// @inheritdoc IPsiTwapOracle
     bytes32 public constant TWAP_TYPEHASH = keccak256(
         'TwapData(bool required,bytes32 conditionId,uint256 startTimestamp,uint256 endTimestamp,uint256 twapPriceYes,uint256 marketEndedAt,uint256 marketEndYesPrice)'
     );
 
-    /// @inheritdoc IRobinTwapOracle
+    /// @inheritdoc IPsiTwapOracle
     bytes32 public constant BATCH_TWAP_TYPEHASH = keccak256(
         'BatchTwapData(TwapData[] markets)TwapData(bool required,bytes32 conditionId,uint256 startTimestamp,uint256 endTimestamp,uint256 twapPriceYes,uint256 marketEndedAt,uint256 marketEndYesPrice)'
     );
@@ -71,7 +71,7 @@ contract RobinTwapOracle is Initializable, UUPSUpgradeable, AccessControlUpgrade
 
     // ============ Initialization ============
 
-    /// @notice Initialize the Robin Twap Oracle
+    /// @notice Initialize the Psi Twap Oracle
     function initialize(address initialOwner, address timelockController, string memory name, string memory version, address twapSigner)
         external
         initializer
@@ -98,7 +98,7 @@ contract RobinTwapOracle is Initializable, UUPSUpgradeable, AccessControlUpgrade
 
     // ============ External Functions ============
 
-    /// @inheritdoc IRobinTwapOracle
+    /// @inheritdoc IPsiTwapOracle
     function initializeMarket(bytes32 conditionId, uint256 yesPositionId, uint256 noPositionId, bool negRisk) external onlyRole(VAULT_ROLE) {
         MarketState storage market = _getTwapOracleStorage().markets[conditionId];
 
@@ -114,7 +114,7 @@ contract RobinTwapOracle is Initializable, UUPSUpgradeable, AccessControlUpgrade
         emit MarketInitialized(conditionId, yesPositionId, noPositionId, negRisk);
     }
 
-    /// @inheritdoc IRobinTwapOracle
+    /// @inheritdoc IPsiTwapOracle
     function submitTwap(DataTypes.BatchTwapData calldata twapData) external whenNotPaused {
         if (twapData.markets.length == 0) revert ZeroAmount();
 
@@ -133,22 +133,22 @@ contract RobinTwapOracle is Initializable, UUPSUpgradeable, AccessControlUpgrade
 
     // ============ View Functions ============
 
-    /// @inheritdoc IRobinTwapOracle
+    /// @inheritdoc IPsiTwapOracle
     function domainSeparator() public view returns (bytes32) {
         return _domainSeparatorV4();
     }
 
-    /// @inheritdoc IRobinTwapOracle
+    /// @inheritdoc IPsiTwapOracle
     function getMarketState(bytes32 conditionId) public view returns (MarketState memory) {
         return _getTwapOracleStorage().markets[conditionId];
     }
 
-    /// @inheritdoc IRobinTwapOracle
+    /// @inheritdoc IPsiTwapOracle
     function isMarketInitialized(bytes32 conditionId) public view returns (bool) {
         return _getTwapOracleStorage().markets[conditionId].lastTwapUpdate > 0;
     }
 
-    /// @inheritdoc IRobinTwapOracle
+    /// @inheritdoc IPsiTwapOracle
     function getTwapAccumulators(bytes32 conditionId)
         public
         view
@@ -164,7 +164,7 @@ contract RobinTwapOracle is Initializable, UUPSUpgradeable, AccessControlUpgrade
         }
     }
 
-    /// @inheritdoc IRobinTwapOracle
+    /// @inheritdoc IPsiTwapOracle
     function batchGetMarketState(bytes32[] calldata conditionIds) public view returns (MarketState[] memory states, bool[] memory signatureRequired) {
         uint256 len = conditionIds.length;
         states = new MarketState[](len);
@@ -175,37 +175,37 @@ contract RobinTwapOracle is Initializable, UUPSUpgradeable, AccessControlUpgrade
         }
     }
 
-    /// @inheritdoc IRobinTwapOracle
+    /// @inheritdoc IPsiTwapOracle
     function getTwapSigner() public view returns (address) {
         return _getTwapOracleStorage().twapSigner;
     }
 
-    /// @inheritdoc IRobinTwapOracle
+    /// @inheritdoc IPsiTwapOracle
     function getDefaultTwapRequired() public view returns (bool) {
         return _getTwapOracleStorage().defaultTwapRequired;
     }
 
-    /// @inheritdoc IRobinTwapOracle
+    /// @inheritdoc IPsiTwapOracle
     function getGlobalTwapRequired() public view returns (bool) {
         return _getTwapOracleStorage().globalTwapRequired;
     }
 
-    /// @inheritdoc IRobinTwapOracle
+    /// @inheritdoc IPsiTwapOracle
     function getGlobalTwapDisabled() public view returns (bool) {
         return _getTwapOracleStorage().globalTwapDisabled;
     }
 
-    /// @inheritdoc IRobinTwapOracle
+    /// @inheritdoc IPsiTwapOracle
     function isMarketTwapRequired(bytes32 conditionId) public view returns (bool) {
         return _getTwapOracleStorage().markets[conditionId].twapRequired;
     }
 
-    /// @inheritdoc IRobinTwapOracle
+    /// @inheritdoc IPsiTwapOracle
     function isMarketFinalized(bytes32 conditionId) public view returns (bool) {
         return _getTwapOracleStorage().markets[conditionId].marketEndedAt > 0;
     }
 
-    /// @inheritdoc IRobinTwapOracle
+    /// @inheritdoc IPsiTwapOracle
     /// @dev Priority: globalTwapDisabled > globalTwapRequired > individual market setting
     function isEffectiveTwapRequired(bytes32 conditionId) public view returns (bool) {
         if (_getTwapOracleStorage().globalTwapDisabled) return false;
@@ -213,12 +213,12 @@ contract RobinTwapOracle is Initializable, UUPSUpgradeable, AccessControlUpgrade
         return _getTwapOracleStorage().markets[conditionId].twapRequired;
     }
 
-    /// @inheritdoc IRobinTwapOracle
+    /// @inheritdoc IPsiTwapOracle
     function isTwapSignatureRequired(bytes32 conditionId) public view returns (bool) {
         return isEffectiveTwapRequired(conditionId) && !isMarketFinalized(conditionId);
     }
 
-    /// @inheritdoc IRobinTwapOracle
+    /// @inheritdoc IPsiTwapOracle
     function getCurrentTwapAccumulator(bytes32 conditionId) external view returns (uint256 twapAccumulatorYes, uint256 lastUpdate) {
         MarketState storage market = _getTwapOracleStorage().markets[conditionId];
 
@@ -248,25 +248,25 @@ contract RobinTwapOracle is Initializable, UUPSUpgradeable, AccessControlUpgrade
         emit MarketTwapRequirementUpdated(conditionId, required);
     }
 
-    /// @inheritdoc IRobinTwapOracle
+    /// @inheritdoc IPsiTwapOracle
     function setDefaultTwapRequired(bool required) public onlyRole(DEFAULT_MANAGER_ROLE) {
         _getTwapOracleStorage().defaultTwapRequired = required;
         emit DefaultTwapRequiredUpdated(required);
     }
 
-    /// @inheritdoc IRobinTwapOracle
+    /// @inheritdoc IPsiTwapOracle
     function setGlobalTwapRequired(bool required) public onlyRole(DEFAULT_MANAGER_ROLE) {
         _getTwapOracleStorage().globalTwapRequired = required;
         emit GlobalTwapRequiredUpdated(required);
     }
 
-    /// @inheritdoc IRobinTwapOracle
+    /// @inheritdoc IPsiTwapOracle
     function setGlobalTwapDisabled(bool disabled) public onlyRole(DEFAULT_MANAGER_ROLE) {
         _getTwapOracleStorage().globalTwapDisabled = disabled;
         emit GlobalTwapDisabledUpdated(disabled);
     }
 
-    /// @inheritdoc IRobinTwapOracle
+    /// @inheritdoc IPsiTwapOracle
     function setTwapSigner(address newSigner) public onlyRole(DEFAULT_MANAGER_ROLE) {
         if (newSigner == address(0)) revert ZeroAddress();
         TwapOracleStorage storage $ = _getTwapOracleStorage();
@@ -275,12 +275,12 @@ contract RobinTwapOracle is Initializable, UUPSUpgradeable, AccessControlUpgrade
         emit TwapSignerUpdated(oldSigner, newSigner);
     }
 
-    /// @inheritdoc IRobinTwapOracle
+    /// @inheritdoc IPsiTwapOracle
     function pause() public onlyRole(DEFAULT_MANAGER_ROLE) {
         _pause();
     }
 
-    /// @inheritdoc IRobinTwapOracle
+    /// @inheritdoc IPsiTwapOracle
     function unpause() public onlyRole(DEFAULT_MANAGER_ROLE) {
         _unpause();
     }

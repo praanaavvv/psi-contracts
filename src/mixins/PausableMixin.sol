@@ -3,14 +3,14 @@ pragma solidity 0.8.31;
 
 import { Initializable } from '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 
-import { IRobinStakingVaultEvents } from '../interfaces/IRobinStakingVaultEvents.sol';
-import { IRobinStakingVaultErrors } from '../interfaces/IRobinStakingVaultErrors.sol';
+import { IPsiStakingVaultEvents } from '../interfaces/IPsiStakingVaultEvents.sol';
+import { IPsiStakingVaultErrors } from '../interfaces/IPsiStakingVaultErrors.sol';
 import { StorageLib } from '../libraries/StorageLib.sol';
 
 /// @title PausableMixin
-/// @notice Granular pause controls for the Robin  vault
+/// @notice Granular pause controls for the Psi  vault
 /// @dev Uses ERC-7201 namespaced storage pattern for upgradeability
-abstract contract PausableMixin is Initializable, IRobinStakingVaultEvents, IRobinStakingVaultErrors {
+abstract contract PausableMixin is Initializable, IPsiStakingVaultEvents, IPsiStakingVaultErrors {
     // ============ ERC-7201 Namespaced Storage ============
 
     function _getPausableStorage() private pure returns (StorageLib.PausableStorage storage) {
