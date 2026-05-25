@@ -1,0 +1,23 @@
+{
+  "chainId": 137,
+  "network": "polygon",
+  "deployedAt": 0,
+  "metadataUri": "https://api.psi.finance/v1/shares/{id}",
+  "contracts": {
+    "PsiTimeLockController": "0x0000000000000000000000000000000000000000",
+    "PsiTwapOracleImplementation": "0x0000000000000000000000000000000000000000",
+    "PsiTwapOracleProxy": "0x0000000000000000000000000000000000000000",
+    "PsiStakingVaultExtension": "0x0000000000000000000000000000000000000000",
+    "PsiStakingVaultImplementation": "0x0000000000000000000000000000000000000000",
+    "PsiStakingVaultProxy": "0x0000000000000000000000000000000000000000",
+    "PsiLens": "0x0000000000000000000000000000000000000000"
+  },
+  "dependencies": {
+    "ctf": "0x4d97dcd97ec945f40cf65f87097ace5ea0476045",
+    "negRiskAdapter": "0xd91e80cf2e7be2e162c6513ced06f1dd0da35296",
+    "negRiskCtfExchange": "0xc5d563a36ae78145c45a50134d48a1215220f80a",
+    "ctfExchange": "0x4bfb41d5b3570defd03c39a9a4d8de6bd8b8982e",
+    "collateral": "0x2791bca1f2de4661ed88a30c99a7a9449aa84174",
+    "wcol": "0x3a3bd7bb9528e159577f7c2e685cc81a765002e2"
+  }
+}

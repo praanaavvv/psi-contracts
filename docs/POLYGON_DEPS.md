@@ -1,3 +1,4 @@
+
 # Polymarket Polygon Dependencies
 
 PSI Finance's `PsiStakingVault` takes 6 external Polymarket addresses at initialization (`ctf`, `negRiskAdapter`, `negRiskCtfExchange`, `ctfExchange`, `underlyingUsdc`, `polymarketWcol`). This document records:
