@@ -15,6 +15,9 @@ optimizer = true
 optimizer_runs = 1 #need to use 1 to stay under contract size limit
 ffi = true
 
+# Deploy script writes deployments/<network>/psi-finance.json via vm.writeJson.
+fs_permissions = [{ access = "read-write", path = "./deployments" }]
+
 [lint]
 # Ignore the entire lib folder
 ignore = ["lib/*"]
